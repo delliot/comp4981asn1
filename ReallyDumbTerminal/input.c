@@ -9,27 +9,60 @@ void input(int i_pipe[], int t_pipe[])
 
 	close(i_pipe[0]);
 
-	while ((c = getc(stdin)))
+	while ((c = getchar()))
 	{
 		switch (c)
 		{
 		case ASCII_CTRL_K:
-			signal(getpid(), SIGTERM);
+			signal(getpid(), SIGABRT);
 			break;
 		case ASCII_ESC:
 		case ASCII_CTRL_D:
 		case ASCII_CTRL_X:
 			break;
-		case ASCII_T:
-			graceful_exit();
-		case ASCII_X:
-			if ( i > 0 && i < BUF_LEN )
+		case ASCII_ENTER:
+			write(i_pipe[1], "get to enter",12);
+			if(write(i_pipe[1], "\r\n", 2) < 0)
 			{
-				buffer[i] = '\0';
-				i--;
+				err_exit("error writing to regular output from input.c");
 			}
+
+			if(write(t_pipe[1], buffer, BUF_LEN) < 0)
+			{
+				err_exit("error writing to translate output from input.c");
+			}
+			clear_buf(buffer);
+			i = 0;
+			break;
+
 		default:
-			write(i_pipe[1], c, 1);
+			if(write(i_pipe[1], &c, 1) < 0)
+			{
+				err_exit("error writing to regular output from input.c"); 
+			}
+
+			if(i + 1 == BUF_LEN)
+			{
+				buffer[i++] = c;
+
+				if(write(i_pipe[1], "\r\n", 2) < 0)
+				{
+					err_exit("error writing to regular output from input.c");
+				}
+
+				if(write(t_pipe[1], buffer, BUF_LEN) < 0)
+				{
+					err_exit("error writing to translate output from input.c");
+				}
+				clear_buf(buffer);
+				i = 0;
+
+			}
+			else
+			{
+				buffer[i++] = c;
+			}
+
 		}
 	}
 

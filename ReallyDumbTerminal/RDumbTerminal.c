@@ -6,6 +6,9 @@ int main(void)
 	int i_pipe[2];
 	int t_pipe[2];
 
+	signal(SIGABRT, catch_signal);
+	signal(SIGTERM, catch_signal);
+
 	system("stty raw igncr -echo");
 
 	if (pipe(i_pipe) < 0)
@@ -24,12 +27,12 @@ int main(void)
 		/*
 		...translate...
 		*/
-		translate(translate_p, t_pipe);
+		translate(i_pipe, t_pipe);
 		
 	} 
 	else if (translate_p == -1)
 	{
-		
+		err_exit("translate fork failed");
 	}
 	else
 	{
@@ -40,7 +43,7 @@ int main(void)
 			...output...
 			*/
 			close(t_pipe[1]);
-			output(output_p, i_pipe, t_pipe);
+			output(i_pipe);
 		}
 		else
 		{
@@ -48,7 +51,7 @@ int main(void)
 			/*
 			...input...
 			*/
-			input(input_p, i_pipe);
+			input(i_pipe, t_pipe);
 		}
 	}
 
@@ -63,15 +66,33 @@ void catch_signal(int sig)
 	*/
 
 	case 6:
+		signal(SIGABRT,NULL);
+
+		if(getpid() == input_p)
+		{
+			system("stty -raw -igncr echo");	
+		}
+		kill(output_p, SIGABRT);
+		kill(translate_p, SIGABRT);
+		kill(getpid(), SIGABRT);
+
 		break;
 	case 15:
+		signal(SIGTERM, NULL);
+		if(getpid() == input_p)
+		{
+			system("stty -raw -igncr echo");
+		}
+		kill(output_p, SIGTERM);
+		kill(translate_p, SIGTERM);
+		kill(getpid(), SIGTERM);
 		break;
 	}
 }
 
 void err_exit(const char * error)
 {
-	perror("error creating pipe");
+	perror(error);
 	if (getpid() == input_p)
 	{
 		system("stty -raw -igncr echo");
