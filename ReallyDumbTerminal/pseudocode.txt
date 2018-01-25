@@ -1,0 +1,40 @@
+main
+
+new IO pipe
+new translation pipe
+
+
+
+translation_process = fork()
+
+if( in child process )
+  goto translation loop(io pipe, translation pipe)
+else
+  output_process = fork()
+  if (in child process)
+    goto output loop(IO pipe)
+  else
+    goto input loop
+
+
+input_loop
+  create buffer
+
+  while(true)
+    get a character
+      if the char is CTRL-K
+        abort all process
+      else if the char is E
+        dispatch buffer to translate loop
+      else
+        add character to buffer
+
+
+
+translation loop
+  create buffer
+
+  while(true)
+    read from translation pipe
+    go char by char and perform translation
+    output via IO pipe to console

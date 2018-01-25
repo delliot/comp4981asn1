@@ -1,13 +1,31 @@
 #include "RDumbTerminal.h"
 
-
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: output
+--
+-- DATE: January 24th 2018
+--
+-- REVISIONS:
+--
+-- DESIGNER: Delan Elliot
+--
+-- PROGRAMMER: Delan Elliot
+--
+-- INTERFACE: void output(i_pipe[2])
+--						i_pipe[]: the input.output pipe. Accessed by all 3 processes.
+--
+-- RETURNS: void
+--
+-- NOTES:
+-- Output receives data from the 2 other processes and prints it to console. Does not do any processing.
+----------------------------------------------------------------------------------------------------------------------*/
 void output(int input[2])
 {
 	char write_buf[BUF_LEN];
 	size_t i;
 
 	close(input[1]);
-	
+
 	int read_stat;
 
 	clear_buf(write_buf);
@@ -30,11 +48,29 @@ void output(int input[2])
 				clear_buf(write_buf);
 				break;
 		}
-
 	}
-
 }
 
+
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: clear_buf
+--
+-- DATE: January 24th 2018
+--
+-- REVISIONS:
+--
+-- DESIGNER: Delan Elliot
+--
+-- PROGRAMMER: Delan Elliot
+--
+-- INTERFACE: void clear_buf(char * buf)
+--									char * buf: buffer to clear
+--
+-- RETURNS: void
+--
+-- NOTES:
+-- Zeroes out a given buffer. All buffers are statically sized so no size parameter is needed.
+----------------------------------------------------------------------------------------------------------------------*/
 void clear_buf(char * buf)
 {
 	size_t i;
