@@ -1,10 +1,33 @@
 #include "RDumbTerminal.h"
 
+
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: translate
+--
+-- DATE: January 24th 2018
+--
+-- REVISIONS:
+--
+-- DESIGNER: Delan Elliot
+--
+-- PROGRAMMER: Delan Elliot
+--
+-- INTERFACE: void translate(int i_pipe[2], int t_pipe[2])
+--									i_pipe[2]: outputs translated buffer to this pipe.
+--									t_pipe[2]: takes input on this pipe from the input process
+--
+-- RETURNS: void
+--
+-- NOTES:
+-- This function performs all the translation and text handling. Also terminates the process when it encounters a 'T'
+----------------------------------------------------------------------------------------------------------------------*/
 void translate(int i_pipe[2], int t_pipe[2])
 {
 	char in_buf[BUF_LEN];
 	char out_buf[BUF_LEN];
-	
+
+	close(t_pipe[1]);
+	close(i_pipe[0]);
 
 	int read_stat;
 	int i, cursor;
@@ -45,7 +68,7 @@ void translate(int i_pipe[2], int t_pipe[2])
 						default:
 							out_buf[cursor++] = in_buf[i];
 
-					}	
+					}
 				}
 
 				printf("get to translate");
@@ -66,10 +89,6 @@ void translate(int i_pipe[2], int t_pipe[2])
 				}
 
 				break;
-		}	
-
-
+		}
 	}
-
 }
-

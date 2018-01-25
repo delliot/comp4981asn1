@@ -1,6 +1,28 @@
 #include "RDumbTerminal.h"
 
 
+
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: input
+--
+-- DATE: January 24th 2018
+--
+-- REVISIONS:
+--
+-- DESIGNER: Delan Elliot
+--
+-- PROGRAMMER: Delan Elliot
+--
+-- INTERFACE: void input (int i_pipe[], int t_pipe[])
+--					i_pipe: the input/output from the console. Input is not translated.
+--					t_pipe: the translation pipe. This class outputs to this pipe when E is pressed.
+--
+-- RETURNS: void
+--
+-- NOTES:
+-- This function is an infinite loop that is run in the main input process. Take input and either forwards it onto the translate
+-- process or aborts the processing on a CTRL-K press.
+----------------------------------------------------------------------------------------------------------------------*/
 void input(int i_pipe[], int t_pipe[])
 {
 	char buffer[BUF_LEN];
@@ -8,6 +30,7 @@ void input(int i_pipe[], int t_pipe[])
 	char c;
 
 	close(i_pipe[0]);
+	close(t_pipe[0]);
 
 	while ((c = getchar()))
 	{
@@ -21,7 +44,6 @@ void input(int i_pipe[], int t_pipe[])
 		case ASCII_CTRL_X:
 			break;
 		case ASCII_ENTER:
-			write(i_pipe[1], "get to enter",12);
 			if(write(i_pipe[1], "\r\n", 2) < 0)
 			{
 				err_exit("error writing to regular output from input.c");
@@ -38,7 +60,7 @@ void input(int i_pipe[], int t_pipe[])
 		default:
 			if(write(i_pipe[1], &c, 1) < 0)
 			{
-				err_exit("error writing to regular output from input.c"); 
+				err_exit("error writing to regular output from input.c");
 			}
 
 			if(i + 1 == BUF_LEN)
