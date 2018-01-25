@@ -48,14 +48,13 @@ void translate(int i_pipe[2], int t_pipe[2])
 					}	
 				}
 
-				printf("get to translate");
 
 				if (write(i_pipe[1], out_buf, BUF_LEN) < 0)
 				{
 					err_exit("writing to output from translate failed");
 				}
 
-				if(write(i_pipe[1], "\r\n", 2))
+				if(write(i_pipe[1], "\r\n", 2) < 0)
 				{
 					err_exit("writing to output from translate failed");
 				}

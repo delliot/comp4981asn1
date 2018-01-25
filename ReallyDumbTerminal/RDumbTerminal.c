@@ -23,7 +23,7 @@ int main(void)
 
 	if ((translate_p = fork()) == 0)
 	{
-		close(i_pipe[1]);
+	
 		/*
 		...translate...
 		*/

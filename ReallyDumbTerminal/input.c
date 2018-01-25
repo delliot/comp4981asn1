@@ -7,6 +7,8 @@ void input(int i_pipe[], int t_pipe[])
 	int i = 0;
 	char c;
 
+	clear_buf(buffer);
+
 	close(i_pipe[0]);
 
 	while ((c = getchar()))
@@ -14,14 +16,13 @@ void input(int i_pipe[], int t_pipe[])
 		switch (c)
 		{
 		case ASCII_CTRL_K:
-			signal(getpid(), SIGABRT);
+			catch_signal(SIGABRT);
 			break;
 		case ASCII_ESC:
 		case ASCII_CTRL_D:
 		case ASCII_CTRL_X:
 			break;
 		case ASCII_ENTER:
-			write(i_pipe[1], "get to enter",12);
 			if(write(i_pipe[1], "\r\n", 2) < 0)
 			{
 				err_exit("error writing to regular output from input.c");
