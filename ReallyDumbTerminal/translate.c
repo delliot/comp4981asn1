@@ -56,7 +56,10 @@ void translate(int i_pipe[2], int t_pipe[2])
 							out_buf[cursor++] = 'z';
 							break;
 						case ASCII_X:
-							out_buf[--cursor] = '\0';
+							if(cursor > 0)
+							{
+								out_buf[--cursor] = '\0';
+							}
 							break;
 						case ASCII_K:
 							clear_buf(out_buf);
@@ -70,8 +73,6 @@ void translate(int i_pipe[2], int t_pipe[2])
 
 					}
 				}
-
-				printf("get to translate");
 
 				if (write(i_pipe[1], out_buf, BUF_LEN) < 0)
 				{
